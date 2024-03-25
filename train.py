@@ -1,6 +1,6 @@
-import os
 import torch
 from torch import nn, optim
+import os
 
 from utils.model_architecture import ViTForClassfication
 from utils.experiment import save_checkpoint, save_experiment, add_attention_tboard
@@ -16,6 +16,8 @@ lr = 1e-2
 save_model_every = 20
 writer = SummaryWriter(f'runs/{exp_name}')
 tboard = f'runs/{exp_name}/tb_images'
+if not os.path.exists(tboard):
+    os.makedirs(tboard)
 
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -72,12 +74,10 @@ class Trainer:
             writer.add_scalar('Validation loss', test_loss, i)
             writer.add_scalar('Accuracy', accuracy, i)
             print(f"Epoch: {i+1}, Train loss: {train_loss:.4f}, Test loss: {test_loss:.4f}, Accuracy: {accuracy:.4f}")
+
             if save_model_every_n_epochs > 0 and (i+1) % save_model_every_n_epochs == 0 and i+1 != epochs:
                 print('\tSave checkpoint at epoch', i+1)
                 save_checkpoint(self.exp_name, self.model, i+1)
-                pppp = os.path.join(tboard, f"attention_mask_{i}")
-                add_attention_tboard(self.model, output=pppp, device="cuda")
-                writer.add_image("Attention mask", pppp)
             
             if test_loss < self.best_val_loss:
                 print(f"Best model found at epoch: {i}")
