@@ -6,6 +6,13 @@ __pycache__/
 # C extensions
 *.so
 
+# Experiment data
+runs/*
+experiment/*
+data/*
+*.json
+*.pt
+
 # Distribution / packaging
 .Python
 build/
